@@ -43,9 +43,40 @@ const RegisterUser = async (req,res) => {
 
         const hashedPassword = await bcrypt.hash(password,10);
 
+        // const verification token // 
 
+        const VerificationToken = await crypto.randomBytes(32).toString('hex')
+
+
+        // create user // 
+
+        user = new User ({
+            name,
+            email,
+            password:hashedPassword,
+            VerificationToken:VerificationToken,
+            isVerfied:false
+        })
+
+        // save the user // 
+
+        await user.save()
+
+        // print the token  // 
+
+        console.log(`verification token : ${VerificationToken}`)
+
+        res.status(201).json({message:"user registered successfully ! "})
+
+
+
+    }catch(err){
+        console.log(err.message);
+        res.status(500).send('server error')
     }
 }
 
 
 const router = express.Router();
+
+export default RegisterUser;
